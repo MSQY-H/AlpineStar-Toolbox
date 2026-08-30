@@ -2,7 +2,7 @@ name: Build and Deploy to toolbox
 
 on:
   push:
-    branches: [ main ]   # 如果你的默认分支是 master，记得改这里
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
@@ -11,25 +11,19 @@ jobs:
       - name: Checkout 源码
         uses: actions/checkout@v4
 
-      - name: 安装 pnpm
-        uses: pnpm/action-setup@v4
+      - name: 安装 Deno
+        uses: denoland/setup-deno@v2
         with:
-          version: 9   # 推荐用 v9，或者你项目里 package.json 指定的版本（如 8）
+          deno-version: v2.x   # 目前最新稳定版
 
-      - name: 设置 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'   # 关键！利用 pnpm-lock.yaml 做缓存加速
-
-      - name: 安装依赖
-        run: pnpm install
+      - name: 安装依赖 (Deno 自动读取 package.json)
+        run: deno install
 
       - name: 构建项目 (Vue + Vuetify)
-        run: pnpm run build
-        # 默认产物在 dist，如有不同请修改下方 publish_dir
-        
-      - name: 添加 .nojekyll 绕过 Jekyll 构建
+        run: deno task build
+        # 等同于 npm run build，会调用 package.json 里的 build 脚本
+
+      - name: 添加 .nojekyll 绕过 Jekyll
         run: touch dist/.nojekyll
 
       - name: 部署到 toolbox 仓库
@@ -37,7 +31,7 @@ jobs:
         with:
           personal_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           external_repository: ${{ github.repository_owner }}/toolbox
-          publish_branch: gh-pages   # 确保 toolbox 仓库 Pages 选这个分支
+          publish_branch: gh-pages
           publish_dir: ./dist
           commit_message: ${{ github.event.head_commit.message }}
           user_name: 'github-actions[bot]'
