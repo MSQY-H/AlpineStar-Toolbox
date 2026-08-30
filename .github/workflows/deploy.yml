@@ -25,6 +25,9 @@ jobs:
 
       - name: 添加 .nojekyll 绕过 Jekyll
         run: touch dist/.nojekyll
+      
+      - name: 支持 SPA 子路由 (复制为 404 兜底)   # 👈 新增这一步
+        run: cp dist/index.html dist/404.html
 
       - name: 部署到 toolbox 仓库
         uses: peaceiris/actions-gh-pages@v4
