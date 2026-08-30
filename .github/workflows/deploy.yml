@@ -20,7 +20,7 @@ jobs:
         run: deno install
 
       - name: 构建项目 (Vue + Vuetify)
-        run: deno task build
+        run: deno task build-only
         # 等同于 npm run build，会调用 package.json 里的 build 脚本
 
       - name: 添加 .nojekyll 绕过 Jekyll
