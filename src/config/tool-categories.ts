@@ -11,8 +11,8 @@ export interface ToolCategory {
 // 手动维护工具分类，按需添加/修改即可
 export const toolCategories: ToolCategory[] = [
   {
-    name: '颜色工具',
-    icon: 'mdi-format-text',
+    name: '设计工具',
+    icon: 'mdi-pencil-ruler-outline',
     tools: [
       { title: '颜色选择与转换', path: '/tools/color-picker', icon: 'mdi-palette-outline' },
     ],

@@ -52,7 +52,7 @@
     </div>
 
     <!-- 项目信息卡片 -->
-    <div class="custom-card">
+    <div class="custom-card mb-4">
       <h2 class="text-2xl font-semibold mb-4">项目信息</h2>
 
       <div class="flex items-center justify-between py-2">
@@ -65,9 +65,26 @@
         <v-chip color="primary" variant="tonal" size="small">Vuetify</v-chip>
       </div>
     </div>
+
+    <!-- 项目源码卡片 -->
+    <div class="custom-card mb-4">
+      <h2 class="text-2xl font-semibold mb-4">项目源码</h2>
+      <a
+        href="https://github.com/MSQY-H/AlpineStar-Toolbox"
+        target="_blank"
+        rel="noopener noreferrer"
+        v-ripple
+        class="flex items-center gap-2 text-primary no-underline rounded-lg px-3 py-2.5 -mx-3 cursor-pointer transition-colors duration-200 hover:bg-black/5 dark:hover:bg-white/5"
+      >
+        <v-icon icon="mdi-github" size="20" />
+        <span>MSQY-H/AlpineStar-Toolbox</span>
+        <v-icon icon="mdi-open-in-new" size="16" class="ml-auto text-gray-400" />
+      </a>
+    </div>
+
   </v-container>
 </template>
 
 <script lang="ts" setup>
-const version = '1.0.0'
+const version = '1.2026.1'
 </script>

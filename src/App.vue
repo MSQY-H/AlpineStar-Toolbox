@@ -4,6 +4,7 @@
     <NavDrawer v-model="drawer" />
     <v-main class="pa-0 bg-surface">
       <router-view />
+      <MirrorBanner />
     </v-main>
   </v-app>
 </template>
@@ -13,6 +14,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppBar from '@/components/AppBar.vue'
 import NavDrawer from '@/components/NavDrawer.vue'
+import MirrorBanner from './components/MirrorBanner.vue'
 
 const drawer = ref(false)
 const router = useRouter()

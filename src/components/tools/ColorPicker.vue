@@ -61,9 +61,33 @@
           >
             <v-icon size="20">mdi-check</v-icon>
           </v-btn>
+          <v-tooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                icon
+                :color="copiedState[field.key] ? 'success' : 'primary'"
+                variant="tonal"
+                rounded="pill"
+                size="small"
+                @click="handleCopy(field.key, field.value)"
+              >
+                <v-icon size="20">{{ copiedState[field.key] ? 'mdi-check' : 'mdi-content-copy' }}</v-icon>
+              </v-btn>
+            </template>
+            {{ copiedState[field.key] ? '复制成功！' : '复制' }}
+          </v-tooltip>
         </div>
       </div>
     </div>
+
+    <v-alert
+      type="warning"
+      variant="outlined"
+      density="compact"
+      class="mt-4"
+      text="转换为 HSL 可能会因为四舍五入产生误差"
+    />
 
     <v-snackbar v-model="snackbar" :timeout="1500" location="bottom">已复制到剪贴板</v-snackbar>
   </v-container>
@@ -75,6 +99,32 @@ import { ref, watch, reactive, computed } from 'vue'
 const color = ref('#0A59F7')
 const snackbar = ref(false)
 const alphaEnabled = ref(false)
+
+// ---------- 复制状态 ----------
+const copiedState = reactive<Record<string, boolean>>({
+  hex: false,
+  hexa: false,
+  rgb: false,
+  rgba: false,
+  hsl: false,
+  hsla: false,
+})
+
+const copyTimers: Record<string, ReturnType<typeof setTimeout>> = {}
+
+const handleCopy = async (key: string, text: string) => {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    return
+  }
+
+  if (copyTimers[key]) clearTimeout(copyTimers[key])
+  copiedState[key] = true
+  copyTimers[key] = setTimeout(() => {
+    copiedState[key] = false
+  }, 1000)
+}
 
 // ---------- 解析 ----------
 function parseColor(str: string): { r: number; g: number; b: number; a: number } | null {
