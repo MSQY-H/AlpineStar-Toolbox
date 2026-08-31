@@ -22,6 +22,7 @@ export const toolCategories: ToolCategory[] = [
     icon: 'mdi-code-braces',
     tools: [
       { title: '时间戳转换', path: '/tools/timestamp', icon: 'mdi-clock-outline' },
+      { title: '图片格式转换', path: '/tools/image-convert', icon: 'mdi-image-outline' },
     ],
   },
 ]

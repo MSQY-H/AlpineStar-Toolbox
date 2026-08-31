@@ -40,6 +40,12 @@ const router = createRouter({
       component: () => import('@/pages/tools/color-picker.vue'),
       meta: { title: '颜色选择与转换', icon: 'mdi-palette-outline' },
     },
+    {
+      path: '/tools/image-convert',
+      component: () => import('@/pages/tools/image-convert.vue'),
+      meta: { title: '图片格式转换', icon: 'mdi-image-edit-outline' },
+    },
+
   ],
 })
 
