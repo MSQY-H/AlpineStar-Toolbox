@@ -30,8 +30,10 @@ const API_URL = 'https://www.loliapi.com/getip/'
 
 const showBanner = ref(false)
 
+// ✅ 修改点：去掉路径开头的 /toolbox/，斜杠可选，保留查询参数
 const mirrorFullUrl = computed(() => {
-  return `https://${MIRROR_HOST}${window.location.pathname}${window.location.search}`
+  const cleanPath = window.location.pathname.replace(/^\/toolbox\/?/, '/')
+  return `https://${MIRROR_HOST}${cleanPath}${window.location.search}`
 })
 
 onMounted(() => {
