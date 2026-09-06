@@ -45,7 +45,7 @@
           class="flex items-center gap-2 text-primary no-underline rounded-lg px-3 py-2.5 -mx-3 cursor-pointer transition-colors duration-200 hover:bg-black/5 dark:hover:bg-white/5"
         >
           <v-icon icon="mdi-creation-outline" size="20" />
-          <span>千问</span>
+          <span>千问 & DeepSeek</span>
           <span class="text-xs text-gray-500 dark:text-gray-400">（网页版）</span>
         </a>
       </div>
@@ -86,5 +86,5 @@
 </template>
 
 <script lang="ts" setup>
-const version = '1.2026.2.2'
+const version = '1.2026.3'
 </script>
