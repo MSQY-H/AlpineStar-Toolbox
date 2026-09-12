@@ -1,22 +1,19 @@
-const CACHE_NAME = 'alpinestar-toolbox-v15'
+const CACHE_NAME = 'alpinestar-toolbox-v17'
 const CHANNEL_NAME = 'sw-cache-channel'
-
-const EXTERNAL_URLS = [
-  'https://esm.sh/@jsquash/jpeg',
-  'https://esm.sh/@jsquash/png',
-  'https://esm.sh/@jsquash/webp',
-  'https://esm.sh/@jsquash/avif',
-]
 
 let cachingEnabled = true
 
-// BroadcastChannel 用于进度通知（可选）
 let bc = null
 try { bc = new BroadcastChannel(CHANNEL_NAME) } catch (_) {}
 
 function sendProgress(data) {
-  if (bc) bc.postMessage(data)
-  else self.clients.matchAll({ includeUncontrolled: true }).then(clients => clients.forEach(c => c.postMessage(data)))
+  if (bc) {
+    bc.postMessage(data)
+  } else {
+    self.clients.matchAll({ includeUncontrolled: true }).then(clients => {
+      clients.forEach(c => c.postMessage(data))
+    })
+  }
 }
 
 function cleanRequest(request) {
@@ -37,7 +34,7 @@ async function cacheAllResources() {
     const res = await fetch(manifestUrl)
     if (!res.ok) throw new Error(`Manifest fetch failed: ${res.status}`)
     const { urls = [] } = await res.json()
-    const allUrls = [...new Set([...urls, ...EXTERNAL_URLS])]
+    const allUrls = [...new Set(urls)]
     const total = allUrls.length
     const cache = await caches.open(CACHE_NAME)
 
@@ -45,16 +42,25 @@ async function cacheAllResources() {
       const url = allUrls[i]
       const absoluteUrl = new URL(url, self.location.origin).href
       try {
-        const opts = absoluteUrl.startsWith(self.location.origin) ? {} : { mode: 'cors' }
-        const response = await fetch(absoluteUrl, opts)
+        const response = await fetch(absoluteUrl)
         if (response.ok) {
           const ct = response.headers.get('Content-Type') || ''
           const isHtml = ct.includes('text/html')
           const isRoot = absoluteUrl === self.location.origin + self.location.pathname.replace(/sw\.js$/, '')
-          if (!isHtml || isRoot) await cache.put(absoluteUrl, response)
+          if (!isHtml || isRoot) {
+            await cache.put(absoluteUrl, response)
+          }
         }
-      } catch (err) { console.warn('[SW] 缓存失败:', absoluteUrl, err) }
-      sendProgress({ type: 'CACHE_PROGRESS', progress: Math.round(((i + 1) / total) * 100), current: i + 1, total, url: absoluteUrl })
+      } catch (err) {
+        console.warn('[SW] 缓存失败:', absoluteUrl, err)
+      }
+      sendProgress({
+        type: 'CACHE_PROGRESS',
+        progress: Math.round(((i + 1) / total) * 100),
+        current: i + 1,
+        total,
+        url: absoluteUrl,
+      })
     }
 
     const rootUrl = self.location.origin + self.location.pathname.replace(/sw\.js$/, '')
@@ -72,7 +78,6 @@ async function clearAllCaches() {
   sendProgress({ type: 'CACHE_CLEARED' })
 }
 
-// 监听页面发送的 postMessage 命令
 self.addEventListener('message', (event) => {
   const data = event.data
   if (!data) return
@@ -94,8 +99,9 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
-      .then(() => self.clients.claim())
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   )
 })
 
@@ -103,6 +109,7 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return
   const url = new URL(event.request.url)
 
+  // 导航请求
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(() => {
@@ -114,6 +121,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // 同源请求
   if (url.origin === self.location.origin) {
     if (cachingEnabled) {
       const clean = cleanRequest(event.request)
@@ -135,14 +143,18 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // 跨域请求（保留作为兜底）
   if (cachingEnabled) {
     event.respondWith(
       caches.match(event.request).then(cached => cached || caches.match(cleanRequest(event.request))).then(cached => {
         if (cached) return cached
-        return fetch(event.request).then(response => {
-          if (response.ok && !(response.headers.get('Content-Type') || '').includes('text/html')) {
+        return fetch(event.request, { mode: 'cors' }).then(response => {
+          if (response.ok || response.type === 'opaque') {
             const clone = response.clone()
-            caches.open(CACHE_NAME).then(cache => cache.put(cleanRequest(event.request), clone))
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(event.request, clone)
+              cache.put(cleanRequest(event.request), response)
+            })
           }
           return response
         }).catch(() => new Response('', { status: 503, statusText: 'Offline' }))

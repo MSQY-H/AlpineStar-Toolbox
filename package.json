@@ -15,11 +15,15 @@
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",
     "@fontsource/roboto-mono": "^5.2.8",
+    "@jsquash/avif": "^2.1.1",
+    "@jsquash/jpeg": "^1.6.0",
+    "@jsquash/png": "^3.1.1",
+    "@jsquash/webp": "^1.5.0",
     "@mdi/font": "7.4.47",
-    "vue": "^3.5.30",
-    "vuetify": "^4.0.2",
     "pinia": "^3.0.4",
-    "vue-router": "^5.0.3"
+    "vue": "^3.5.30",
+    "vue-router": "^5.0.3",
+    "vuetify": "^4.0.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.2.1",

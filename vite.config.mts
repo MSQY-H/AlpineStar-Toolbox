@@ -83,6 +83,21 @@ export default defineConfig(({ mode }) => {
       },
       extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
     },
+    // 优化依赖，排除 jSquash 包（它们内部使用 WASM，需要特殊处理）
+    optimizeDeps: {
+      exclude: [
+        '@jsquash/jpeg',
+        '@jsquash/png',
+        '@jsquash/webp',
+        '@jsquash/avif',
+      ],
+    },
+    // Worker 使用 ESM 格式，确保动态导入正常
+    worker: {
+      format: 'es',
+    },
+    // 将 WASM 视为静态资源
+    assetsInclude: ['**/*.wasm'],
     server: {
       port: 3000,
     },
