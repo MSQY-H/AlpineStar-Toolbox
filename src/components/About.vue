@@ -86,5 +86,5 @@
 </template>
 
 <script lang="ts" setup>
-const version = '1.2026.3.2'
+const version = '1.2026.3.3'
 </script>

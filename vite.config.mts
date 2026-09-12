@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
           ],
         },
       }),
-      // 自定义插件：生成资源清单
+      // 生成资源清单
       {
         name: 'generate-asset-manifest',
         apply: 'build',
@@ -75,6 +75,43 @@ export default defineConfig(({ mode }) => {
           console.log(`[Vite] 已生成资源清单: ${manifestPath} (共 ${urls.length} 个文件)`)
         },
       },
+      // 自动注入 SW 版本号（yyyymmddhhmmss）
+      {
+        name: 'inject-sw-version',
+        apply: 'build',
+        writeBundle(options) {
+          const outDir = options.dir || 'dist'
+          const swPath = path.join(outDir, 'sw.js')
+          if (!fs.existsSync(swPath)) {
+            console.warn('[Vite] sw.js 未找到，跳过版本号注入')
+            return
+          }
+
+          const now = new Date()
+          const pad = (n: number) => String(n).padStart(2, '0')
+          const version =
+            `${now.getFullYear()}` +
+            `${pad(now.getMonth() + 1)}` +
+            `${pad(now.getDate())}` +
+            `${pad(now.getHours())}` +
+            `${pad(now.getMinutes())}` +
+            `${pad(now.getSeconds())}`
+
+          let content = fs.readFileSync(swPath, 'utf-8')
+          const newContent = content.replace(
+            /alpinestar-toolbox-v\d+/,
+            `alpinestar-toolbox-${version}`
+          )
+
+          if (newContent === content) {
+            console.warn('[Vite] 未在 sw.js 中找到版本占位符，未替换')
+            return
+          }
+
+          fs.writeFileSync(swPath, newContent, 'utf-8')
+          console.log(`[Vite] SW 版本号已注入: ${version}`)
+        },
+      },
     ],
     define: { 'process.env': {} },
     resolve: {
@@ -83,7 +120,6 @@ export default defineConfig(({ mode }) => {
       },
       extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
     },
-    // 优化依赖，排除 jSquash 包（它们内部使用 WASM，需要特殊处理）
     optimizeDeps: {
       exclude: [
         '@jsquash/jpeg',
@@ -92,11 +128,9 @@ export default defineConfig(({ mode }) => {
         '@jsquash/avif',
       ],
     },
-    // Worker 使用 ESM 格式，确保动态导入正常
     worker: {
       format: 'es',
     },
-    // 将 WASM 视为静态资源
     assetsInclude: ['**/*.wasm'],
     server: {
       port: 3000,
