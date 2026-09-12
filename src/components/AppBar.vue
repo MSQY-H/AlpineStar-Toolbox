@@ -15,7 +15,7 @@
         <div class="flex items-center gap-3 w-full min-w-0">
           <v-avatar size="34" class="shrink-0">
             <v-img
-              src="https://cn.cravatar.com/avatar/160bd1dbf3863e876098bbd568961703f96934d74ae75ded6872aca9ad82aa1b?s=128&d=mp"
+              src="@/assets/logo.webp"
               alt="网站 Logo"
               cover
             />
