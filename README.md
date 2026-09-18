@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./src/assets/logo.png" alt="MSQY's Homepage" width="128"/>
+<img src="./src/assets/logo_toolbox.png" alt="AlpineStar Toolbox" width="128"/>
 
 <h1>AlpineStar Toolbox</h1>
 
@@ -45,29 +45,29 @@
 ### 开始安装
 
 1. 先将此仓库 clone 至你的电脑。
-  ``` bash
-  git clone https://github.com/MSQY-H/AlpineStar-Toolbox.git
-  ```
+   ``` bash
+   git clone https://github.com/MSQY- H/AlpineStar-Toolbox.git
+   ```
 
 2. 安装依赖
-  ``` bash
-  bun install
-  ```
+   ``` bash
+   bun install
+   ```
 
 3. 开发预览
-  ``` bash
-  bun run dev
-  ```
+   ``` bash
+   bun run dev
+   ```
 
 4. 构建：
-  ``` bash
-  bun run build-only
-  ```
+   ``` bash
+   bun run build-only
+   ```
 
 5. 预览:
-  ``` bash
-  bun run preview
-  ```
+   ``` bash
+   bun run preview
+   ```
 
 ## 更新日志
 
