@@ -3,7 +3,11 @@
     <AppBar @toggle-drawer="drawer = !drawer" @go-home="goHome" />
     <NavDrawer v-model="drawer" />
     <v-main class="pa-0 bg-surface">
-      <router-view />
+      <router-view v-slot="{ Component, route }">
+        <transition name="page" mode="out-in">
+          <component :is="Component" :key="route.path" />
+        </transition>
+      </router-view>
       <MirrorBanner />
     </v-main>
   </v-app>
@@ -23,3 +27,19 @@ const goHome = () => {
   router.push('/')
 }
 </script>
+
+<style scoped>
+/* 页面切换：淡入淡出 + 模糊 */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity 0.25s ease,
+    filter 0.25s ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  filter: blur(3px);
+}
+</style>

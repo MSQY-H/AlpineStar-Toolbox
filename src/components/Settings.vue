@@ -2,53 +2,59 @@
   <v-container class="py-6" fluid>
     <div class="custom-card">
       <h2 class="text-2xl font-semibold mb-6">外观</h2>
-      <div class="text-base font-medium mb-2">深色模式</div>
-      <v-select
-        v-model="darkMode"
-        :items="darkModeOptions"
-        density="compact"
-        variant="outlined"
-        hide-details
-        class="max-w-[240px]"
-      />
+      <div class="flex items-center justify-between gap-4">
+        <div class="text-base font-medium">深色模式</div>
+        <v-select
+          v-model="darkMode"
+          :items="darkModeOptions"
+          density="compact"
+          variant="outlined"
+          hide-details
+          class="max-w-[240px] shrink-0"
+        />
+      </div>
     </div>
 
     <div class="custom-card mt-6">
       <h2 class="text-2xl font-semibold mb-6">离线缓存</h2>
 
-      <div class="text-base font-medium">启用离线缓存</div>
-
-      <v-switch
-        v-model="offlineEnabled"
-        color="primary"
-        hide-details
-        :loading="isLoading"
-        :disabled="isLoading"
-        @update:model-value="handleOfflineToggle"
-        inset="material"
-      />
-
-      <template v-if="showProgress">
-        <v-progress-linear
-          :model-value="progressValue"
+      <div class="flex items-center justify-between gap-4">
+        <div class="text-base font-medium">启用离线缓存</div>
+        <v-switch
+          v-model="offlineEnabled"
           color="primary"
-          height="8"
-          rounded
-          class=""
+          hide-details
+          :loading="isLoading"
+          :disabled="isLoading"
+          @update:model-value="handleOfflineToggle"
+          inset="material"
+          class="shrink-0"
         />
-        <div class="text-caption text-medium-emphasis mt-1">
-          {{ progressText }}
+      </div>
+
+      <!-- 进度条带出现过渡 -->
+      <transition name="progress-fade">
+        <div v-if="showProgress" class="mt-4">
+          <v-progress-linear
+            :model-value="progressValue"
+            color="primary"
+            height="8"
+            rounded
+          />
+          <div class="text-caption text-medium-emphasis mt-1">
+            {{ progressText }}
+          </div>
         </div>
-      </template>
+      </transition>
     </div>
-    
+
     <v-snackbar
-        v-model="snackbarVisible"
-        :color="statusType"
-        timeout="4000"
-        location="bottom"
-      >
-        {{ statusMessage }}
+      v-model="snackbarVisible"
+      :color="statusType"
+      timeout="4000"
+      location="bottom"
+    >
+      {{ statusMessage }}
     </v-snackbar>
   </v-container>
 </template>
@@ -289,3 +295,28 @@ watch(darkMode, (val) => {
   applyTheme(val)
 })
 </script>
+
+<style scoped>
+/* 进度条出现/消失的过渡 */
+.progress-fade-enter-active,
+.progress-fade-leave-active {
+  transition:
+    opacity 0.25s ease,
+    max-height 0.25s ease,
+    margin-top 0.25s ease;
+  overflow: hidden;
+}
+
+.progress-fade-enter-from,
+.progress-fade-leave-to {
+  opacity: 0;
+  max-height: 0;
+  margin-top: 0 !important;
+}
+
+.progress-fade-enter-to,
+.progress-fade-leave-from {
+  opacity: 1;
+  max-height: 100px;
+}
+</style>
